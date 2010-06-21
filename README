@@ -1,6 +1,6 @@
 # clj-audio
 
-FIXME: write description
+Idiomatic Clojure wrapper for the Java Sound API.
 
 ## Usage
 
