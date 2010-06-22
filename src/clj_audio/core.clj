@@ -17,6 +17,15 @@
             SourceDataLine
             TargetDataLine]))
 
+;;;; Audio formats
+
+(defvar default-format
+  (make-format :pcm-signed
+               44100, 16
+               44100, 4
+               2
+               :little-endian))
+
 ;;;; Audio input streams
 
 (defmulti ->stream
@@ -36,8 +45,10 @@
   (AudioInputStream. line))
 
 (defmethod ->stream java.io.InputStream
-  [stream fmt length]
-  (AudioInputStream. stream fmt length))
+  [stream length & [fmt]]
+  (AudioInputStream. stream
+                     (or fmt default-format)
+                     length))
 
 ;;;; Mixer
 
