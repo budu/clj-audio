@@ -49,10 +49,10 @@
   (AudioInputStream. line))
 
 (defmethod ->stream java.io.InputStream
-  [stream length & [fmt]]
+  [stream & [length fmt]]
   (AudioInputStream. stream
                      (or fmt default-format)
-                     length))
+                     (or length -1)))
 
 (defmethod ->stream clojure.lang.IFn
   [f n]
