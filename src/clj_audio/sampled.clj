@@ -81,3 +81,28 @@
         (.drain ~binding)
         result#)
       (finally (.close ~binding)))))
+
+(defvar- line-events
+  (wrap-enum javax.sound.sampled.LineEvent$Type
+             :constants-as-keys))
+
+(defn make-line-listener
+  "Create a proxy of LineListener with the given function as update
+  method. The function argument are the type of event (:open, :start,
+  :stop and :close), the line and the position at which the event
+  happened."
+  [f]
+  (proxy [javax.sound.sampled.LineListener] []
+    (update [event] (f (line-events (.getType event))
+                       (.getLine event)
+                       (.getFramePosition event)))))
+
+(defmacro with-line-listener
+  "Create a line listener for the given line with the given
+  function. Evaluate body with the added listener and remove it
+  afterward."
+  [line f & body]
+  `(let [ll# (make-line-listener ~f)]
+     (.addLineListener ~line ll#)
+     ~@body
+     (.removeLineListener ~line ll#)))
