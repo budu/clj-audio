@@ -123,3 +123,23 @@
                                      (->format audio-stream)
                                      *line-buffer-size*)]
     (play* source audio-stream *playback-buffer-size*)))
+
+;;;; Clip playback
+
+(defn clip
+  "Creates a clip from the given audio stream and open it."
+  [audio-stream]
+  (doto (make-line :clip (->format audio-stream))
+    (.open audio-stream)))
+
+(defn play-clip
+  "Play the given clip one or n times. Optionally takes a start and end
+  position expressed in number of frames."
+  [clp & [n start end]]
+  (let [start (or start 0)
+        end   (or end
+                  (dec (.getFrameLength clp)))]
+    (doto clp
+      (.setFramePosition start)
+      (.setLoopPoints start end)
+      (.loop (dec (or n 1))))))
