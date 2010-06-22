@@ -50,6 +50,13 @@
                      (or fmt default-format)
                      length))
 
+(defmethod ->stream clojure.lang.IFn
+  [f n]
+  (let [s (java.io.ByteArrayInputStream.
+           (byte-array (map (comp byte f)
+                            (range n))))]
+    (->stream s n)))
+
 ;;;; Mixer
 
 (defn mixers
