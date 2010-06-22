@@ -77,7 +77,7 @@
   using a buffer of the given size. Returns the number of bytes played."
   [#^SourceDataLine source audio-stream buffer-size]
   (let [buffer (byte-array buffer-size)]
-    (compare-and-set! *playing* false true)
+    (swap! *playing* (constantly true))
     (loop [cnt 0 total 0]
       (if (and (> cnt -1) @*playing*)
         (do
@@ -86,7 +86,7 @@
           (recur (.read audio-stream buffer 0 (alength buffer))
                  (+ total cnt)))
         (do
-          (compare-and-set! *playing* true false)
+          (swap! *playing* (constantly false))
           total)))))
 
 (defn play
