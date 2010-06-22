@@ -89,6 +89,11 @@
           (swap! *playing* (constantly false))
           total)))))
 
+(defn stop
+  "Stop playback for the current thread."
+  []
+  (swap! *playing* (constantly false)))
+
 (defn play
   "Play the given audio stream."
   [audio-stream]
