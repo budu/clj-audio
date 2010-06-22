@@ -40,6 +40,10 @@
   [file & _]
   (AudioSystem/getAudioInputStream file))
 
+(defmethod ->stream java.net.URL
+  [url & _]
+  (AudioSystem/getAudioInputStream url))
+
 (defmethod ->stream TargetDataLine
   [line & _]
   (AudioInputStream. line))
