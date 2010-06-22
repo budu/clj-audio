@@ -118,12 +118,18 @@
   (swap! *playing* (constantly false)))
 
 (defn play
-  "Play the given audio stream."
-  [audio-stream]
-  (with-data-line [source (make-line :output
-                                     (->format audio-stream)
-                                     *line-buffer-size*)]
-    (play* source audio-stream *playback-buffer-size*)))
+  "Play the given audio stream. Accepts an optional listener function
+  that will be called when a line event is raised, taking the event
+  type, the line and the stream position."
+  [audio-stream & [listener]]
+  (let [line (make-line :output
+                        (->format audio-stream)
+                        *line-buffer-size*)
+        p #(with-data-line [source line]
+             (play* source audio-stream *playback-buffer-size*))]
+    (if listener
+      (with-line-listener line listener (p))
+      (p))))
 
 ;;;; Clip playback
 
