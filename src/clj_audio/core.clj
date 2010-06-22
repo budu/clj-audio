@@ -85,8 +85,9 @@
             (.write source buffer 0 cnt))
           (recur (.read audio-stream buffer 0 (alength buffer))
                  (+ total cnt)))
-        total))
-    (compare-and-set! *playing* true false)))
+        (do
+          (compare-and-set! *playing* true false)
+          total)))))
 
 (defn play
   "Play the given audio stream."
