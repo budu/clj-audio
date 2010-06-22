@@ -9,21 +9,49 @@
 (ns #^{:author "Nicolas Buduroi"
        :doc "Wrapper for Java Sound API's sampled package."}
   clj-audio.sampled
-  (:use [clojure.contrib.def :only [defvar defvar-]])
+  (:use clj-audio.utils
+        [clojure.contrib.def :only [defvar defvar-]])
   (:import [javax.sound.sampled
+            AudioFormat
             AudioSystem
             DataLine$Info
             SourceDataLine]))
+
+;;;; AudioFormat
+
+(defvar- encodings
+  (wrap-enum javax.sound.sampled.AudioFormat$Encoding))
+
+(defn make-format
+  "Create a new AudioFormat object."
+  ([sample-rate sample-size channels signed endianness]
+     (AudioFormat. sample-rate
+                   sample-size
+                   channels
+                   signed
+                   (= endianness :big-endian)))
+  ([encoding sample-rate sample-size frame-rate frame-size channels endianness]
+     (AudioFormat. (encodings encoding)
+                   sample-rate
+                   sample-size
+                   channels
+                   frame-size
+                   frame-rate
+                   (= endianness :big-endian))))
 
 (defn ->format
   "Gets the given object's AudioFormat."
   [o]
   (.getFormat o))
 
+;;;; Mixer
+
 (defvar *mixer*
   nil
   "Mixer to be be used by functions creating lines, if nil let the
   system decides which mixer to use.")
+
+;;;; Line
 
 (defvar- line-types
   {:clip javax.sound.sampled.Clip
