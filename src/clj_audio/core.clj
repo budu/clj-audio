@@ -14,6 +14,7 @@
   (:import [javax.sound.sampled
             AudioInputStream
             AudioSystem
+            Clip
             SourceDataLine
             TargetDataLine]))
 
@@ -143,3 +144,9 @@
       (.setFramePosition start)
       (.setLoopPoints start end)
       (.loop (dec (or n 1))))))
+
+(defn loop-clip
+  "Play the given clip continuously in a loop. Optionally takes a start
+  and end position expressed in number of frames."
+  [clp & [start end]]
+  (play-clip clp (inc Clip/LOOP_CONTINUOUSLY) start end))
