@@ -14,9 +14,13 @@
   (:import [javax.sound.sampled
             AudioFormat
             AudioSystem
+            Clip
             DataLine$Info
             Line$Info
-            SourceDataLine]))
+            Mixer
+            Port
+            SourceDataLine
+            TargetDataLine]))
 
 ;;;; AudioFormat
 
@@ -55,9 +59,11 @@
 ;;;; Line
 
 (defvar- line-types
-  {:clip javax.sound.sampled.Clip
-   :output javax.sound.sampled.SourceDataLine
-   :input javax.sound.sampled.TargetDataLine})
+  {:clip   Clip
+   :input  TargetDataLine
+   :output SourceDataLine
+   :port   Port
+   :mixer  Mixer})
 
 (defn line-info [line-type & [fmt buffer-size]]
   (let [line-type (line-types line-type)]
