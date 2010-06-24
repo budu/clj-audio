@@ -77,6 +77,11 @@
   `(binding [*mixer* ~mixer]
      ~@body))
 
+(defn supports-line?
+  "Check if the given mixer supports the given line type."
+  [line-type mixer]
+  (.isLineSupported mixer (line-info line-type)))
+
 ;;;; Playback
 
 (def default-buffer-size (* 64 1024))
