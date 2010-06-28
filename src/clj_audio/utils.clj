@@ -11,6 +11,12 @@
   clj-audio.utils
   (:import java.lang.reflect.Modifier))
 
+(defn clojurize-name [name]
+  (apply str
+    (interpose "-"
+      (map #(.toLowerCase %)
+           (re-seq #"[A-Z]+(?=[A-Z]|$|\s)|[A-Z][a-z]+" name)))))
+
 (defn clojurize-constant-name [name]
   (.replace (.toLowerCase (str name)) "_" "-"))
 

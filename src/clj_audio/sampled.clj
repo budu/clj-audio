@@ -14,9 +14,14 @@
   (:import [javax.sound.sampled
             AudioFormat
             AudioSystem
-            Clip
-            DataLine$Info
+            BooleanControl
+            CompoundControl
+            EnumControl
+            FloatControl
+            Line
             Line$Info
+            DataLine$Info
+            Clip
             Mixer
             Port
             SourceDataLine
@@ -118,3 +123,46 @@
      (.addLineListener ~line ll#)
      ~@body
      (.removeLineListener ~line ll#)))
+
+;;;; Control
+
+(defn controls-list [o]
+  (seq
+   (condp #(isa? %2 %1) (class o)
+     CompoundControl (.getMemberControls o)
+     Line (.getControls o))))
+
+(def controls-map)
+
+(defn ->control-pair [ctrl]
+  (let [klass (class ctrl)
+        type-name (str (.getType ctrl))]
+    [(-> type-name clojurize-name keyword)
+     (if (isa? klass CompoundControl)
+       (controls-map ctrl)
+       ctrl)]))
+
+(defn controls-map [o]
+  (reduce conj {}
+          (map ->control-pair (controls-list o))))
+
+(defn control-info [control]
+  (into
+   (condp #(isa? %2 %1) (class control)
+     FloatControl {:mid-label (.getMidLabel control)
+                   :update-period (.getUpdatePeriod control)
+                   :minimum (.getMinimum control)
+                   :units (.getUnits control)
+                   :min-label (.getMinLabel control)
+                   :max-label (.getMaxLabel control)
+                   :maximum (.getMaximum control)
+                   :precision (.getPrecision control)}
+     EnumControl {:values (.getValues control)}
+     BooleanControl {:true-label (.getStateLabel control true)
+                     :false-label (.getStateLabel control false)})
+   {:type (.getType control)}))
+
+(defn value [control & [new-value]]
+  (if (nil? new-value)
+    (.getValue control)
+    (.setValue control new-value)))
