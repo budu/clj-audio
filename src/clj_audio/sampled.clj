@@ -124,6 +124,20 @@
      ~@body
      (.removeLineListener ~line ll#)))
 
+;;;; Line predicates
+
+(defn open? [line] (.isOpen line))
+(defn supports-control? [line ctrl-type]
+  (.isControlSupported line ctrl-type))
+
+(defn active? [data-line] (.isActive data-line))
+(defn running? [data-line] (.isRunning data-line))
+
+(defn clip? [o] (isa? (type o) Clip))
+(defn port? [o] (isa? (type o) Port))
+(defn source? [o] (isa? o SourceDataLine))
+(defn target? [o] (isa? o TargetDataLine))
+
 ;;;; Control
 
 (defn controls-list
