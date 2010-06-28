@@ -126,7 +126,9 @@
 
 ;;;; Control
 
-(defn controls-list [o]
+(defn controls-list
+  "Returns a list of controls found in the given object."
+  [o]
   (seq
    (condp #(isa? %2 %1) (class o)
      CompoundControl (.getMemberControls o)
@@ -134,7 +136,10 @@
 
 (def controls-map)
 
-(defn ->control-pair [ctrl]
+(defn ->control-pair
+  "Returns a key-control pair for the given control, if it's a
+  CompoundControl then convert it to a controls map."
+  [ctrl]
   (let [klass (class ctrl)
         type-name (str (.getType ctrl))]
     [(-> type-name clojurize-name keyword)
@@ -142,11 +147,15 @@
        (controls-map ctrl)
        ctrl)]))
 
-(defn controls-map [o]
+(defn controls-map
+  "Returns a map of controls found in the given object."
+  [o]
   (reduce conj {}
           (map ->control-pair (controls-list o))))
 
-(defn control-info [control]
+(defn control-info
+  "Returns a map of control's parameter."
+  [control]
   (into
    (condp #(isa? %2 %1) (class control)
      FloatControl {:mid-label (.getMidLabel control)
@@ -162,7 +171,9 @@
                      :false-label (.getStateLabel control false)})
    {:type (.getType control)}))
 
-(defn value [control & [new-value]]
+(defn value
+  "Get or set the value of the given control."
+  [control & [new-value]]
   (if (nil? new-value)
     (.getValue control)
     (.setValue control new-value)))
