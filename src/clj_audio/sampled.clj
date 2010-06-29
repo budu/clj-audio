@@ -191,3 +191,25 @@
   (if (nil? new-value)
     (.getValue control)
     (.setValue control new-value)))
+
+;;;; File writing support
+
+(defvar- file-types
+  (wrap-enum javax.sound.sampled.AudioFileFormat$Type))
+
+(defn supports-file-type?
+  "Check if the given file type is supported by the system, for the
+  specified (optional) audio stream."
+  [file-type & [audio-stream]]
+  (if audio-stream
+    (AudioSystem/isFileTypeSupported (file-types file-type)
+                                     audio-stream)
+    (AudioSystem/isFileTypeSupported (file-types file-type))))
+
+(defn write
+  "Writes an audio-stream to the specified File or OutputStream of the
+  specified file type."
+  [audio-stream file-type file-or-stream]
+  (AudioSystem/write audio-stream
+                     (file-types file-type)
+                     file-or-stream))
