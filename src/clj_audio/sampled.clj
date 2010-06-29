@@ -197,6 +197,12 @@
 (defvar- file-types
   (wrap-enum javax.sound.sampled.AudioFileFormat$Type))
 
+(defn supported-file-types
+  "Returns a list of supported file types."
+  []
+  (map #(keyword (clojurize-constant-name %1))
+       (AudioSystem/getAudioFileTypes)))
+
 (defn supports-file-type?
   "Check if the given file type is supported by the system, for the
   specified (optional) audio stream."
