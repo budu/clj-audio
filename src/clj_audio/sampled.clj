@@ -47,10 +47,12 @@
                   (= endianness :big-endian))))
 
 (defn ->format-info
-  "Returns a map representing the given object's AudioFormat
-  properties."
+  "Returns a map representing the given AudioFormat or object's
+  AudioFormat properties."
   [o]
-  (let [fmt (.getFormat o)]
+  (let [fmt (if (isa? (class o) AudioFormat)
+              o
+              (.getFormat o))]
     {:channels (.getChannels fmt),
      :frame-rate (.getFrameRate fmt),
      :frame-size (.getFrameSize fmt),
