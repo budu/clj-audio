@@ -21,11 +21,14 @@
 ;;;; Audio formats
 
 (defvar default-format
-  (make-format :pcm-signed
-               44100, 16
-               44100, 4
-               2
-               :little-endian))
+  (make-format
+   {:encoding :pcm-signed
+    :sample-rate 44100
+    :sample-size-in-bits 16
+    :frame-rate 44100
+    :frame-size 4
+    :channels 2
+    :endianness :little-endian}))
 
 ;;;; Audio input streams
 
@@ -128,7 +131,7 @@
   type, the line and the stream position."
   [audio-stream & [listener]]
   (let [line (make-line :output
-                        (->format audio-stream)
+                        (->format-info audio-stream)
                         *line-buffer-size*)
         p #(with-data-line [source line]
              (play* source audio-stream *playback-buffer-size*))]
@@ -141,7 +144,7 @@
 (defn clip
   "Creates a clip from the given audio stream and open it."
   [audio-stream]
-  (doto (make-line :clip (->format audio-stream))
+  (doto (make-line :clip (->format-info audio-stream))
     (.open audio-stream)))
 
 (defn play-clip

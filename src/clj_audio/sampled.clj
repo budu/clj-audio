@@ -33,26 +33,33 @@
   (wrap-enum javax.sound.sampled.AudioFormat$Encoding))
 
 (defn make-format
-  "Create a new AudioFormat object."
-  ([sample-rate sample-size channels signed endianness]
-     (AudioFormat. sample-rate
-                   sample-size
-                   channels
-                   signed
-                   (= endianness :big-endian)))
-  ([encoding sample-rate sample-size frame-rate frame-size channels endianness]
-     (AudioFormat. (encodings encoding)
-                   sample-rate
-                   sample-size
-                   channels
-                   frame-size
-                   frame-rate
-                   (= endianness :big-endian))))
+  "Create a new AudioFormat object from the given format info map."
+  [format-info]
+  (let [{:keys [encoding sample-rate sample-size-in-bits
+                channels frame-rate frame-size
+                endianness]} format-info]
+    (AudioFormat. (encodings encoding)
+                  sample-rate
+                  sample-size-in-bits
+                  channels
+                  frame-size
+                  frame-rate
+                  (= endianness :big-endian))))
 
-(defn ->format
-  "Gets the given object's AudioFormat."
+(defn ->format-info
+  "Returns a map representing the given object's AudioFormat
+  properties."
   [o]
-  (.getFormat o))
+  (let [fmt (.getFormat o)]
+    {:channels (.getChannels fmt),
+     :frame-rate (.getFrameRate fmt),
+     :frame-size (.getFrameSize fmt),
+     :sample-rate (.getSampleRate fmt),
+     :sample-size-in-bits (.getSampleSizeInBits fmt),
+     :encoding (keyword (clojurize-constant-name (.getEncoding fmt)))
+     :endianness (if (.isBigEndian fmt)
+                   :big-endian
+                   :little-endian)}))
 
 ;;;; Mixer
 
@@ -70,8 +77,9 @@
    :port   Port
    :mixer  Mixer})
 
-(defn line-info [line-type & [fmt buffer-size]]
-  (let [line-type (line-types line-type)]
+(defn line-info [line-type & [format-info buffer-size]]
+  (let [line-type (line-types line-type)
+        fmt (make-format format-info)]
     (cond (and fmt buffer-size)
                    (DataLine$Info. line-type fmt buffer-size)
           fmt      (DataLine$Info. line-type fmt)
@@ -80,8 +88,8 @@
 (defn make-line
   "Create a data line of the specified type (:clip, :output, :input)
   with an optional AudioFormat and buffer size."
-  [line-type & [fmt buffer-size]]
-  (let [info (line-info line-type fmt buffer-size)]
+  [line-type & [format-info buffer-size]]
+  (let [info (line-info line-type format-info buffer-size)]
     (if *mixer*
       (.getLine *mixer* info)
       (AudioSystem/getLine info))))
@@ -200,7 +208,7 @@
 (defn supported-file-types
   "Returns a list of supported file types."
   []
-  (map #(keyword (clojurize-constant-name %1))
+  (map #(keyword (clojurize-constant-name %))
        (AudioSystem/getAudioFileTypes)))
 
 (defn supports-file-type?
