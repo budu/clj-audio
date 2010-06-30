@@ -207,6 +207,14 @@
 (defvar- file-types
   (wrap-enum javax.sound.sampled.AudioFileFormat$Type))
 
+(defn ->file-format-info
+  [o]
+  (let [fmt (AudioSystem/getAudioFileFormat o)]
+    {:frame-length (.getFrameLength fmt)
+     :byte-length (.getByteLength fmt)
+     :type (keyword (clojurize-constant-name (.getType fmt)))
+     :format (->format-info (.getFormat fmt))}))
+
 (defn supported-file-types
   "Returns a list of supported file types."
   []
