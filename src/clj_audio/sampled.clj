@@ -70,6 +70,16 @@
   "Mixer to be be used by functions creating lines, if nil let the
   system decides which mixer to use.")
 
+(defn mixer-info
+  "Returns a map of common properties for the given Mixer object."
+  [mixer]
+  (let [mi (.getMixerInfo mixer)]
+    {:vendor (.getVendor mi),
+     :name (.getName mi),
+     :version (.getVersion mi),
+     :description (.getDescription mi)
+     :class (class mi)}))
+
 ;;;; Line
 
 (defvar- line-types
