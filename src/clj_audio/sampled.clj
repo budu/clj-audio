@@ -208,12 +208,14 @@
   (wrap-enum javax.sound.sampled.AudioFileFormat$Type))
 
 (defn ->file-format-info
+  "Returns a map representing the given object's AudioFileFormat
+  properties."
   [o]
   (let [fmt (AudioSystem/getAudioFileFormat o)]
     {:frame-length (.getFrameLength fmt)
      :byte-length (.getByteLength fmt)
      :type (keyword (clojurize-constant-name (.getType fmt)))
-     :format (->format-info (.getFormat fmt))}))
+     :format-info (->format-info (.getFormat fmt))}))
 
 (defn supported-file-types
   "Returns a list of supported file types."
