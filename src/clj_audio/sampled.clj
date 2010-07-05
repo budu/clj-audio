@@ -68,6 +68,21 @@
                    :big-endian
                    :little-endian)}))
 
+(defn supports-conversion?
+  "Check if the system supports data format conversion between the given
+  source and target. The source must be an AudioFormat instance while
+  the target can be another AudioFormat instance or an encoding. Note
+  that if the source and target format are the same, false is returned."
+  [source target]
+  (let [target (if (keyword? target) (encodings target) target)]
+    (AudioSystem/isConversionSupported target source)))
+
+(defn convert
+  "Convert the given audio stream to one with the specified audio
+  format."
+  [audio-stream target-fmt]
+  (AudioSystem/getAudioInputStream target-fmt audio-stream))
+
 ;;;; Mixer
 
 (defvar *mixer*
