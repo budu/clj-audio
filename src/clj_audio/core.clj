@@ -65,6 +65,26 @@
                             (range n))))]
     (->stream s n)))
 
+(defn decode
+  "Convert the given stream to a data format that can be played on
+  most (if not all) systems. The decoded is signed PCM in little endian
+  ordering, sample size is 16 bit if not specified by the given stream
+  format."
+  [audio-stream]
+  (let [fi  (->format-info audio-stream)
+        sample-size (:sample-size-in-bits fi)
+        sample-size (if (< sample-size 0)
+                      16
+                      sample-size)
+        frame-size (* (/ sample-size 8) (:channels fi))
+        fmt (make-format
+             (merge fi {:encoding :pcm-signed
+                        :sample-size-in-bits sample-size
+                        :frame-size frame-size
+                        :frame-rate (:sample-rate fi)
+                        :endianness :little-endian}))]
+    (convert audio-stream fmt)))
+
 ;;;; Mixer
 
 (defn mixers
