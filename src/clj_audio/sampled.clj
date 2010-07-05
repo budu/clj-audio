@@ -46,6 +46,11 @@
                   frame-rate
                   (= endianness :big-endian))))
 
+(defn ->format
+  "Gets the given object's AudioFormat."
+  [o]
+  (.getFormat o))
+
 (defn ->format-info
   "Returns a map representing the given AudioFormat or object's
   AudioFormat properties."
