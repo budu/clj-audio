@@ -159,7 +159,8 @@
 (defn play
   "Play the given audio stream. Accepts an optional listener function
   that will be called when a line event is raised, taking the event
-  type, the line and the stream position."
+  type, the line and the stream position as arguments. Returns the
+  number of bytes played."
   [audio-stream & [listener]]
   (let [line (make-line :output
                         (->format-info audio-stream)
