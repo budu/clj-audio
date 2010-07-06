@@ -6,14 +6,18 @@ It's a work in progress...
 
 ## Usage
 
-Play a wave file.
+Playing a wave file.
 
     (play (->stream "~/test.wav"))
 
-Play a MP3 file, this example requires some extra libraries, see
+Playing a MP3 file, this example requires some extra libraries, see
 "Installation" below.
     
     (-> (->stream "~/test.mp3") decode play)
+
+Decoding a MP3 file and writing it to a WAVE file.
+
+    (-> (->stream "~/test.mp3") decode (write :wave "~/test.wav"))
 
 Play the resulting stream from applying the identity function from 0 to
 99999. The given function output will be converted to bytes. The

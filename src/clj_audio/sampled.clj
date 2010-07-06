@@ -232,10 +232,11 @@
     (.getValue control)
     (.setValue control new-value)))
 
-;;;; File writing support
+;;;; AudioFileFormat
 
-(defvar- file-types
-  (wrap-enum javax.sound.sampled.AudioFileFormat$Type))
+(defvar file-types
+  (wrap-enum javax.sound.sampled.AudioFileFormat$Type)
+  "Map of audio file types, keyed by their corresponding keywords.")
 
 (defn ->file-format-info
   "Returns a map representing the given object's AudioFileFormat
@@ -261,11 +262,3 @@
     (AudioSystem/isFileTypeSupported (file-types file-type)
                                      audio-stream)
     (AudioSystem/isFileTypeSupported (file-types file-type))))
-
-(defn write
-  "Writes an audio-stream to the specified File or OutputStream of the
-  specified file type."
-  [audio-stream file-type file-or-stream]
-  (AudioSystem/write audio-stream
-                     (file-types file-type)
-                     file-or-stream))

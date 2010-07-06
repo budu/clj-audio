@@ -85,6 +85,17 @@
                         :endianness :little-endian}))]
     (convert audio-stream fmt)))
 
+(defn write
+  "Writes an audio-stream to the specified File (can be a string) or
+  OutputStream of the specified file type. See the supported-file-types
+  for available file types. Returns the number of bytes written."
+  [audio-stream file-type file-or-stream]
+  (AudioSystem/write audio-stream
+                     (file-types file-type)
+                     (if (string? file-or-stream)
+                       (java.io.File. file-or-stream)
+                       file-or-stream)))
+
 ;;;; Mixer
 
 (defn mixers
