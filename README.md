@@ -10,7 +10,7 @@ Play a wave file.
 
     (play (->stream "~/test.wav"))
 
-Play a mp3 file, this example requires some extra libraries, see
+Play a MP3 file, this example requires some extra libraries, see
 "Installation" below.
     
     (-> (->stream "~/test.mp3") decode play)
@@ -29,17 +29,11 @@ Leiningen. I'll eventually put everything in Clojars for more
 convenience.
 
 For encoded file type support, you'll need to add the corresponding
-Service Provider Interface (SPI) which are simple jar files. The
-following page contains the Tritonus plug-ins shared classes
-(tritonus_share-*.jar) which is needed by most JSA's SPI.
-
- * http://www.tritonus.org/plugins.html
-
-For MP3 support, you can grab the latest versions of JLayer and MP3SPI
-found in those pages:
-
- * http://www.javazoom.net/javalayer/sources.html
- * http://www.javazoom.net/mp3spi/sources.html
+Service Provider Interface (SPI) which are simple jar files. First
+you'll have to get the [Tritonus plug-ins] shared classes
+(tritonus_share-*.jar) which is needed by most JSA's SPI. Then to get
+MP3 support for example, you can grab the latest versions of [JLayer]
+and [MP3SPI].
 
 ## License
 
@@ -51,3 +45,7 @@ at the root of this distribution. By using this software in any fashion,
 you are agreeing to be bound by the terms of this license.
 
 You must not remove this notice, or any other, from this software.
+
+[Tritonus plug-ins]: http://www.tritonus.org/plugins.html
+[JLayer]: http://www.javazoom.net/javalayer/sources.html
+[MP3SPI]: http://www.javazoom.net/mp3spi/sources.html
