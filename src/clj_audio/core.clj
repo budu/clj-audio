@@ -196,3 +196,25 @@
   and end position expressed in number of frames."
   [clp & [start end]]
   (play-clip clp (inc Clip/LOOP_CONTINUOUSLY) start end))
+
+;;;; Skipping
+
+(def *skip-inaccuracy-size* 1200)
+
+(defn skip
+  "Skip the given audio stream by the specified number of bytes."
+  [audio-stream to-skip]
+  (loop [total 0 remainder to-skip]
+    (if (>= (+ total *skip-inaccuracy-size*) to-skip)
+      audio-stream
+      (let [skipped (.skip audio-stream remainder)]
+        (recur (+ total skipped)
+               (- remainder skipped))))))
+
+(defn skipper
+  "Returns a skip-like function that takes a ratio a the length of the
+  given audio stream."
+  [audio-stream]
+  (let [length (.available audio-stream)]
+    (fn [audio-stream ratio]
+      (skip audio-stream (* ratio length)))))
