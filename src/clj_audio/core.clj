@@ -163,7 +163,7 @@
   number of bytes played."
   [audio-stream & [listener]]
   (let [line (make-line :output
-                        (->format-info audio-stream)
+                        (->format audio-stream)
                         *line-buffer-size*)
         p #(with-data-line [source line]
              (play* source audio-stream *playback-buffer-size*))]
@@ -176,7 +176,7 @@
 (defn clip
   "Creates a clip from the given audio stream and open it."
   [audio-stream]
-  (doto (make-line :clip (->format-info audio-stream))
+  (doto (make-line :clip (->format audio-stream))
     (.open audio-stream)))
 
 (defn play-clip

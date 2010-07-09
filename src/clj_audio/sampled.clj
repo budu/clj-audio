@@ -109,9 +109,8 @@
    :port   Port
    :mixer  Mixer})
 
-(defn line-info [line-type & [format-info buffer-size]]
-  (let [line-type (line-types line-type)
-        fmt (make-format format-info)]
+(defn line-info [line-type & [fmt buffer-size]]
+  (let [line-type (line-types line-type)]
     (cond (and fmt buffer-size)
                    (DataLine$Info. line-type fmt buffer-size)
           fmt      (DataLine$Info. line-type fmt)
@@ -120,8 +119,8 @@
 (defn make-line
   "Create a data line of the specified type (:clip, :output, :input)
   with an optional AudioFormat and buffer size."
-  [line-type & [format-info buffer-size]]
-  (let [info (line-info line-type format-info buffer-size)]
+  [line-type & [fmt buffer-size]]
+  (let [info (line-info line-type fmt buffer-size)]
     (if *mixer*
       (.getLine *mixer* info)
       (AudioSystem/getLine info))))
