@@ -128,9 +128,11 @@
 (defmacro with-data-line
   "Open the given data line then, in a try expression, call start before
   evaluating body and call drain after. Finally close the line."
-  [[binding make-line] & body]
+  [[binding make-line & [fmt]] & body]
   `(let [~binding #^DataLine ~make-line]
-     (.open ~binding)
+     ~(if fmt
+        `(.open ~binding ~fmt)
+        `(.open ~binding))
      (try
       (.start ~binding)
       (let [result# (do ~@body)]
