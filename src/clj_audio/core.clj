@@ -20,7 +20,7 @@
 
 ;;;; Audio formats
 
-(defvar default-format
+(def *default-format*
   (make-format
    {:encoding :pcm-signed
     :sample-rate 44100
@@ -55,7 +55,7 @@
 (defmethod ->stream java.io.InputStream
   [stream & [length fmt]]
   (AudioInputStream. stream
-                     (or fmt default-format)
+                     (or fmt *default-format*)
                      (or length -1)))
 
 (defmethod ->stream clojure.lang.IFn
