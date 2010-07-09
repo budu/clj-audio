@@ -171,8 +171,13 @@
 (defn supports-control? [line ctrl-type]
   (.isControlSupported line ctrl-type))
 
-(defn active? [data-line] (.isActive data-line))
-(defn running? [data-line] (.isRunning data-line))
+(defn active?
+  "Returns true if the line is engaging in active I/O."
+  [data-line] (.isActive data-line))
+
+(defn running?
+  "Returns true once the line is started and false once it's stopped."
+  [data-line] (.isRunning data-line))
 
 (defn clip? [o] (isa? (type o) Clip))
 (defn port? [o] (isa? (type o) Port))
