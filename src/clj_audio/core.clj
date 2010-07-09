@@ -216,5 +216,5 @@
   given audio stream."
   [audio-stream]
   (let [length (.available audio-stream)]
-    (fn [audio-stream ratio]
+    (fn [ratio]
       (skip audio-stream (* ratio length)))))
