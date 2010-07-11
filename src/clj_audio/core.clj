@@ -130,7 +130,7 @@
   "Playback buffer size in bytes.")
 
 (defvar *playing*
-  (atom false)
+  (ref false)
   "Variable telling if play* is currectly writing to a line. If set to
   false during playback, play* will exit.")
 
@@ -139,7 +139,7 @@
   using a buffer of the given size. Returns the number of bytes played."
   [#^SourceDataLine source audio-stream buffer-size]
   (let [buffer (byte-array buffer-size)]
-    (swap! *playing* (constantly true))
+    (dosync (ref-set *playing* true))
     (loop [cnt 0 total 0]
       (if (and (> cnt -1) @*playing*)
         (do
@@ -147,14 +147,14 @@
             (.write source buffer 0 cnt))
           (recur (.read audio-stream buffer 0 (alength buffer))
                  (+ total cnt)))
-        (do
-          (swap! *playing* (constantly false))
+        (dosync
+          (ref-set *playing* false)
           total)))))
 
 (defn stop
   "Stop playback for the current thread."
   []
-  (swap! *playing* (constantly false)))
+  (dosync (ref-set *playing* false)))
 
 (defn play
   "Play the given audio stream. Accepts an optional listener function
