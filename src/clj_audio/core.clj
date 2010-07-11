@@ -96,6 +96,18 @@
                        (java.io.File. file-or-stream)
                        file-or-stream)))
 
+(defn finished?
+  "Returns true if the given audio stream doesn't have any bytes
+  available."
+  [audio-stream]
+  (= 0 (.available audio-stream)))
+
+(defn close
+  "Flush and close the given audio stream."
+  [audio-stream]
+  (.flush audio-stream)
+  (.close audio-stream))
+
 ;;;; Mixer
 
 (defn mixers
