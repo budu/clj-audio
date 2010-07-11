@@ -1,3 +1,4 @@
+
 # clj-audio
 
 Idiomatic Clojure wrapper for the Java Sound API.
@@ -5,6 +6,8 @@ Idiomatic Clojure wrapper for the Java Sound API.
 It's a work in progress...
 
 ## Usage
+
+### Playback
 
 Playing a wave file.
 
@@ -19,9 +22,10 @@ Decoding a MP3 file and writing it to a WAVE file.
 
     (-> (->stream "~/test.mp3") decode (write :wave "~/test.wav"))
 
-Play the resulting stream from applying the identity function from 0 to
-99999. The given function output will be converted to bytes. The
-resulting stream will be 100000 bytes long.
+### Synthesizing sounds
+
+Playing the resulting stream from applying the identity function from 0
+to 99999. The given function output will be converted to bytes.
 
     (play (->stream identity 100000))
 
