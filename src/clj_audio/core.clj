@@ -156,6 +156,14 @@
   []
   (dosync (ref-set *playing* false)))
 
+(defn play-with
+  "Play the given audio stream with the specified line. Returns the
+  number of bytes played."
+  [audio-stream #^SourceDataLine line]
+  (let [fmt (->format audio-stream)]
+    (with-data-line [source line fmt]
+      (play* source audio-stream default-buffer-size))))
+
 (defn play
   "Play the given audio stream. Accepts an optional listener function
   that will be called when a line event is raised, taking the event
