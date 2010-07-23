@@ -1,9 +1,12 @@
 
 # clj-audio
 
-Idiomatic Clojure wrapper for the Java Sound API.
+This library is a general purpose audio library built on top of the Java
+Sound API. It comprises wrappers for JSA's `sampled` and `midi` packages
+in the corresponding namespaces. It also include a higher level API for
+audio playback in the `core` namespace.
 
-It's a work in progress...
+The `midi` namespace is a work in progress.
 
 ## Usage
 
@@ -57,10 +60,10 @@ file format given the corresponding SPI and adding their extensions to
     
 ## Installation
 
-It's too early for having a distribution right now, so the best way to
-get clj-audio is to clone this repository and build the project using
-Leiningen. I'll eventually put everything in Clojars for more
-convenience.
+This library is available on [Clojars]. To use clj-audio in your
+Leiningen project, add the following dependency.
+
+    [clj-audio "0.1.0"]
 
 For encoded file type support, you'll need to add the corresponding
 Service Provider Interface (SPI) which are simple jar files. First
@@ -84,3 +87,4 @@ You must not remove this notice, or any other, from this software.
 [JLayer]: http://www.javazoom.net/javalayer/sources.html
 [MP3SPI]: http://www.javazoom.net/mp3spi/sources.html
 [MP3 player]: http://gist.github.com/471910
+[Clojars]: http://clojars.org/clj-audio
