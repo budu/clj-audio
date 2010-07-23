@@ -98,7 +98,7 @@
      :name (.getName mi),
      :version (.getVersion mi),
      :description (.getDescription mi)
-     :class (class mi)}))
+     :class (class mixer)}))
 
 ;;;; Line
 
