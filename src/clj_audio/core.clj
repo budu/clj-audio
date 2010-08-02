@@ -102,7 +102,7 @@
   [audio-stream]
   (= 0 (.available audio-stream)))
 
-(defn close
+(defn flush-close
   "Flush and close the given audio stream."
   [audio-stream]
   (.flush audio-stream)
