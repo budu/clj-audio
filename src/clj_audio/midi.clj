@@ -13,7 +13,9 @@
         [clojure.contrib.def :only [defmacro-]])
   (:import [javax.sound.midi
             MidiUnavailableException
-            MidiSystem]))
+            MidiSystem
+            Receiver
+            Transmitter]))
 
 ;;;; MidiSystem
 
@@ -67,7 +69,7 @@
   [source]
   (MidiSystem/getMidiFileFormat source))
 
-;;;; MidiDevice
+;;;; MidiDevice, Transmitter and Receiver
 
 (defn devices
   "Returns all midi devices available."
@@ -79,3 +81,30 @@
   "Returns a map of information about the given midi device."
   [device]
   (info->map (.getDeviceInfo device)))
+
+(defn- ->transmitter [o]
+  (if (isa? (class o) Transmitter)
+    o
+    (.getTransmitter o)))
+
+(defn- ->receiver [o]
+  (if (isa? (class o) Receiver)
+    o
+    (.getReceiver o)))
+
+(defn connect
+  "Connects a transmitter to a receiver. Can also take objects that have
+  a transmitter or a receiver."
+  [transmitter receiver]
+  (.setReceiver (->transmitter transmitter)
+                (->receiver receiver)))
+
+(defn open
+  "Opens on the given devices, receivers or transmitters."
+  [& objects]
+  (doseq [o objects] (.open o)))
+
+(defn close
+  "Closes on the given devices, receivers or transmitters."
+  [& objects]
+  (doseq [o objects] (.close o)))
