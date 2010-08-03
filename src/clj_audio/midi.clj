@@ -108,3 +108,12 @@
   "Closes on the given devices, receivers or transmitters."
   [& objects]
   (doseq [o objects] (.close o)))
+
+(defn receiver-proxy
+  "Returns a proxy that act as a Receiver sending the received messages
+  to the given receiver-function with the message and a time-stamp as
+  arguments."
+  [receiver-function]
+  (proxy [Receiver] []
+    (close [])
+    (send [msg ts] (receiver-function msg ts))))
