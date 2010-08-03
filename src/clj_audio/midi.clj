@@ -9,7 +9,8 @@
 (ns #^{:author "Nicolas Buduroi"
        :doc "Wrapper for Java Sound API's midi package."}
   clj-audio.midi
-  (:use [clojure.contrib.def :only [defmacro-]])
+  (:use clj-audio.utils
+        [clojure.contrib.def :only [defmacro-]])
   (:import [javax.sound.midi
             MidiUnavailableException
             MidiSystem]))
@@ -59,9 +60,4 @@
 (defn device-info
   "Returns a map of information about the given midi device."
   [device]
-  (let [di (.getDeviceInfo device)]
-    {:vendor (.getVendor di)
-     :name (.getName di)
-     :version (.getVersion di)
-     :description (.getDescription di)
-     :class (class device)}))
+  (info->map (.getDeviceInfo device)))

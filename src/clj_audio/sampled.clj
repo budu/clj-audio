@@ -93,12 +93,7 @@
 (defn mixer-info
   "Returns a map of common properties for the given Mixer object."
   [mixer]
-  (let [mi (.getMixerInfo mixer)]
-    {:vendor (.getVendor mi),
-     :name (.getName mi),
-     :version (.getVersion mi),
-     :description (.getDescription mi)
-     :class (class mixer)}))
+  (info->map (.getMixerInfo mixer)))
 
 ;;;; Line
 

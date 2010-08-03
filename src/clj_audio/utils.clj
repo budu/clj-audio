@@ -42,3 +42,9 @@
       (enum->map (map #(.getName %) cs)
                  (map #(.get % nil) cs)
                  constants-as-keys))))
+
+(defn info->map [info]
+  {:vendor (.getVendor info)
+   :name (.getName info)
+   :version (.getVersion info)
+   :description (.getDescription info)})
