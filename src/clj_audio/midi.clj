@@ -49,6 +49,24 @@
   (return-nil-if-unavailable
    (MidiSystem/getTransmitter)))
 
+(defn ->sequence
+  "Returns a Sequence from the given source that can be either a file,
+  an InputStream or an URL."
+  [source]
+  (MidiSystem/getSequence source))
+
+(defn ->soundbank
+  "Returns a Soundbank from the given source that can be either a file,
+  an InputStream or an URL."
+  [source]
+  (MidiSystem/getSoundbank source))
+
+(defn ->midi-file-format
+  "Returns a MidiFileFormat from the given source that can be either a
+  file, an InputStream or an URL."
+  [source]
+  (MidiSystem/getMidiFileFormat source))
+
 ;;;; MidiDevice
 
 (defn devices
