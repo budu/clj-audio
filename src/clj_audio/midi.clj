@@ -8,4 +8,42 @@
 
 (ns #^{:author "Nicolas Buduroi"
        :doc "Wrapper for Java Sound API's midi package."}
-  clj-audio.midi)
+  clj-audio.midi
+  (:use [clojure.contrib.def :only [defmacro-]])
+  (:import [javax.sound.midi
+            MidiUnavailableException
+            MidiSystem]))
+
+;;;; MidiSystem
+
+(defmacro- return-nil-if-unavailable [& body]
+  `(try ~@body
+    (catch ~'MidiUnavailableException _# nil)))
+
+(defn default-receiver
+  "Returns the default receiver."
+  []
+  (return-nil-if-unavailable
+   (MidiSystem/getReceiver)))
+
+(defn default-sequencer
+  "Returns the default sequencer. If connected? is true, the sequencer
+  will be connected to the default synthesizer or receiver if
+  unavailable."
+  [& [connected?]]
+  (return-nil-if-unavailable
+   (if connected?
+     (MidiSystem/getSequencer true)
+     (MidiSystem/getSequencer))))
+
+(defn default-synthesizer
+  "Returns the default synthesizer."
+  []
+  (return-nil-if-unavailable
+   (MidiSystem/getSynthesizer)))
+
+(defn default-transmitter
+  "Returns the default transmitter."
+  []
+  (return-nil-if-unavailable
+   (MidiSystem/getTransmitter)))
