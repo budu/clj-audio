@@ -10,11 +10,12 @@
        :doc "Wrapper for Java Sound API's midi package."}
   clj-audio.midi
   (:use clj-audio.utils
-        [clojure.contrib.def :only [defmacro-]])
+        [clojure.contrib.def :only [defmacro- defvar-]])
   (:import [javax.sound.midi
             MidiUnavailableException
             MidiSystem
             Receiver
+            Sequence
             Transmitter]))
 
 ;;;; MidiSystem
@@ -117,3 +118,47 @@
   (proxy [Receiver] []
     (close [])
     (send [msg ts] (receiver-function msg ts))))
+
+;;;; Sequencer and Sequence
+
+(defvar- division-types (wrap-enum Sequence))
+
+(defn empty-sequence
+  "Creates an empty Sequence where division-type can be one
+  of :ppq, :smpte-24, :smpte-25, :smpte-30drop or :smpte-30; resolution
+  is the number of ticks by quarter note or frame. You can also specify
+  a number of automatically created tracks."
+  [division-type resolution & [num-tracks]]
+  (let [dt (division-types division-type)]
+    (if num-tracks
+      (Sequence. dt resolution num-tracks)
+      (Sequence. dt resolution))))
+
+(defn sequence-info
+  "Returns a map of immutable information about the given sequence."
+  [sequence]
+  {:division-type (.getDivisionType sequence)
+   :microsecond-length (.getMicrosecondLength sequence)
+   :tick-length (.getTickLength sequence)
+   :resolution (.getResolution sequence)})
+
+(defn tracks
+  "Returns a list of all tracks contained in the given Sequence."
+  [sequence]
+  (seq (.getTracks sequence)))
+
+(defn create-track
+  "Creates a new empty track in the given Sequence."
+  [sequence]
+  (.createTrack sequence))
+
+(defn delete-track
+  "Deletes the specified track from the given Sequence. The track
+  argument can be an index of the track and if omitted the first track
+  is delete."
+  [sequence & [track]]
+  (.deleteTrack sequence
+                (cond
+                 (= track nil) (first (tracks sequence))
+                 (integer? track) (nth (track sequence) track)
+                 :default track)))
