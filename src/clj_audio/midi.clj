@@ -47,3 +47,21 @@
   []
   (return-nil-if-unavailable
    (MidiSystem/getTransmitter)))
+
+;;;; MidiDevice
+
+(defn devices
+  "Returns all midi devices available."
+  []
+  (map #(MidiSystem/getMidiDevice %)
+       (MidiSystem/getMidiDeviceInfo)))
+
+(defn device-info
+  "Returns a map of information about the given midi device."
+  [device]
+  (let [di (.getDeviceInfo device)]
+    {:vendor (.getVendor di)
+     :name (.getName di)
+     :version (.getVersion di)
+     :description (.getDescription di)
+     :class (class device)}))
