@@ -59,7 +59,9 @@
   "Returns a Sequence from the given source that can be either a file,
   an InputStream or an URL."
   [source]
-  (MidiSystem/getSequence (file-if-string source)))
+  (if (isa? (class source) Sequencer)
+    (.getSequence source)
+    (MidiSystem/getSequence (file-if-string source))))
 
 (defn ->soundbank
   "Returns a Soundbank from the given source that can be either a file,
