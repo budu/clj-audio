@@ -211,11 +211,17 @@
                         (File. file)
                         file))))
 
+(defn start-recording
+  "Starts recording all tracks and channels to the given Sequence on the
+  specified Sequencer."
+  [sequencer sequence]
+  (.setSequence sequencer sequence)
+  (doseq [track (tracks sequence)]
+    (.recordEnable sequencer track -1))
+  (.startRecording sequencer))
+
 (defn- record-sequence* [sequencer sequence runner]
-  (doto sequencer
-    (.setSequence sequence)
-    (.recordEnable (first (.getTracks sequence)) 0)
-    (.startRecording))
+  (start-recording sequencer sequence)
   (try
    (runner sequencer)
    (finally (.stopRecording sequencer)))
