@@ -19,6 +19,7 @@
             Sequence
             Sequencer
             Sequencer$SyncMode
+            Synthesizer
             Transmitter]))
 
 ;;;; MidiSystem
@@ -258,3 +259,43 @@
                     (or runner
                         (fn [&_] (while (.isRunning sequencer)
                                         (Thread/sleep 30)))))))
+
+;;;; Synthesizer
+
+(defn synthesizer-info
+  "Returns a map of information about the given Synthesizer."
+  [#^Synthesizer synthesizer]
+  {:latency (.getLatency synthesizer)
+   :max-polyphony (.getMaxPolyphony synthesizer)})
+
+(defn available-instruments
+  "Returns all available instruments found in the given Synthesizer."
+  [#^Synthesizer synthesizer]
+  (seq (.getAvailableInstruments synthesizer)))
+
+(defn loaded-instruments
+  "Returns all loaded instruments found in the given Synthesizer."
+  [#^Synthesizer synthesizer]
+  (seq (.getLoadedInstruments synthesizer)))
+
+(defn channels
+  "Returns all channels found in the given Synthesizer."
+  [#^Synthesizer synthesizer]
+  (seq (.getChannels synthesizer)))
+
+(defn remap
+  "Remaps an new Instrument in place of an old one. Returns true if it
+  worked."
+  [#^Synthesizer synthesizer old new]
+  (.remapInstrument synthesizer old new))
+
+(defn voice-status
+  "Returns the status of all voices produced by the given Synthesizer."
+  [#^Synthesizer synthesizer]
+  (seq (map #(hash-map :active (.active %)
+                       :bank (.bank %)
+                       :channel (.channel %)
+                       :note (.note %)
+                       :program (.program %)
+                       :volume (.volume %))
+            (.getVoiceStatus synthesizer))))
