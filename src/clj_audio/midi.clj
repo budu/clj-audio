@@ -103,11 +103,13 @@
     (.getReceiver o)))
 
 (defn connect
-  "Connects a transmitter to a receiver. Can also take objects that have
-  a transmitter or a receiver."
-  [transmitter receiver]
+  "Connects a transmitter to one or more receivers. Can also take
+  objects that have a transmitter or a receiver."
+  [transmitter receiver & receivers]
   (.setReceiver (->transmitter transmitter)
-                (->receiver receiver)))
+                (->receiver receiver))
+  (when receivers
+    (apply connect transmitter (first receivers) (rest receivers))))
 
 (defn open
   "Opens on the given devices, receivers or transmitters."
