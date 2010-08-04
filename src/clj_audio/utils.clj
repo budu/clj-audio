@@ -48,3 +48,8 @@
    :name (.getName info)
    :version (.getVersion info)
    :description (.getDescription info)})
+
+(defn file-if-string [file]
+  (if (string? file)
+    (java.io.File. file)
+    file))

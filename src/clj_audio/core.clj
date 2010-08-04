@@ -10,6 +10,7 @@
        :doc "Clojure support for audio."}
   clj-audio.core
   (:use clj-audio.sampled
+        clj-audio.utils
         [clojure.contrib.def :only [defvar]])
   (:import [javax.sound.sampled
             AudioInputStream
@@ -92,9 +93,7 @@
   [audio-stream file-type file-or-stream]
   (AudioSystem/write audio-stream
                      (file-types file-type)
-                     (if (string? file-or-stream)
-                       (java.io.File. file-or-stream)
-                       file-or-stream)))
+                     (file-if-string file-or-stream)))
 
 (defn finished?
   "Returns true if the given audio stream doesn't have any bytes
@@ -143,7 +142,7 @@
 
 (defvar *playing*
   (ref false)
-  "Variable telling if play* is currectly writing to a line. If set to
+  "Variable telling if play* is currently writing to a line. If set to
   false during playback, play* will exit.")
 
 (defn play*

@@ -59,19 +59,19 @@
   "Returns a Sequence from the given source that can be either a file,
   an InputStream or an URL."
   [source]
-  (MidiSystem/getSequence source))
+  (MidiSystem/getSequence (file-if-string source)))
 
 (defn ->soundbank
   "Returns a Soundbank from the given source that can be either a file,
   an InputStream or an URL."
   [source]
-  (MidiSystem/getSoundbank source))
+  (MidiSystem/getSoundbank (file-if-string source)))
 
 (defn ->midi-file-format
   "Returns a MidiFileFormat from the given source that can be either a
   file, an InputStream or an URL."
   [source]
-  (MidiSystem/getMidiFileFormat source))
+  (MidiSystem/getMidiFileFormat (file-if-string source)))
 
 (defn supported-midi-file-types
   "Returns a list of supported MIDI file types for writing the given
@@ -207,9 +207,7 @@
   (let [type (if (= 1 (count (tracks sequence))) 0 1)]
     (MidiSystem/write sequence
                       (or midi-file-type type)
-                      (if (string? file)
-                        (File. file)
-                        file))))
+                      (file-if-string file))))
 
 (defn start-recording
   "Starts recording all tracks and channels to the given Sequence on the
