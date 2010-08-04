@@ -299,3 +299,15 @@
                        :program (.program %)
                        :volume (.volume %))
             (.getVoiceStatus synthesizer))))
+
+;;;; Soundbank
+
+(defn soundbank-info
+  "Returns a map of information about the given Soundbank."
+  [soundbank]
+  {:description (.getDescription soundbank)
+   :instruments (seq (.getInstruments soundbank))
+   :name (.getName soundbank)
+   :resources (seq (.getResources soundbank))
+   :vendor (.getVendor soundbank)
+   :version (.getVersion soundbank)})
