@@ -11,11 +11,14 @@
   clj-audio.midi
   (:use clj-audio.utils
         [clojure.contrib.def :only [defmacro- defvar-]])
-  (:import [javax.sound.midi
+  (:import java.io.File
+           [javax.sound.midi
             MidiUnavailableException
             MidiSystem
             Receiver
             Sequence
+            Sequencer
+            Sequencer$SyncMode
             Transmitter]))
 
 ;;;; MidiSystem
@@ -70,6 +73,12 @@
   [source]
   (MidiSystem/getMidiFileFormat source))
 
+(defn supported-midi-file-types
+  "Returns a list of supported MIDI file types for writing the given
+  Sequence."
+  [sequence]
+  (seq (MidiSystem/getMidiFileTypes sequence)))
+
 ;;;; MidiDevice, Transmitter and Receiver
 
 (defn devices
@@ -119,7 +128,31 @@
     (close [])
     (send [msg ts] (receiver-function msg ts))))
 
-;;;; Sequencer and Sequence
+(defn- with-devices* [bindings body & [connected?]]
+  (let [devices (partition 2 bindings)
+        device-inits (map second devices)
+        devices (map first devices)]
+    `(let [~@bindings]
+       (open ~@devices)
+       (try
+        ~(when connected?
+           `(connect ~@devices))
+        ~@body
+        (finally (close ~@devices))))))
+
+(defmacro with-devices
+  "Binds the given devices then executes the body. Opens all devices
+  before and closes them after."
+  [[& bindings] & body]
+  (with-devices* bindings body))
+
+(defmacro with-connected-devices
+  "Binds the given devices then executes the body. Opens and connect
+  sequentially all devices before and closes them after."
+  [[& bindings] & body]
+  (with-devices* bindings body true))
+
+;;;; Sequence
 
 (defvar- division-types (wrap-enum Sequence))
 
@@ -162,3 +195,58 @@
                  (= track nil) (first (tracks sequence))
                  (integer? track) (nth (track sequence) track)
                  :default track)))
+
+(defn write-midi
+  "Writes the given Sequence to the specified file or OutputStream. The
+  file argument can be a string. An optional midi-file-type can be
+  specified, when missing, type 0 is used if the sequence has exactly
+  one track, else type 1 is used."
+  [sequence file & [midi-file-type]]
+  (let [type (if (= 1 (count (tracks sequence))) 0 1)]
+    (MidiSystem/write sequence
+                      (or midi-file-type type)
+                      (if (string? file)
+                        (File. file)
+                        file))))
+
+(defn- record-sequence* [sequencer sequence runner]
+  (doto sequencer
+    (.setSequence sequence)
+    (.recordEnable (first (.getTracks sequence)) 0)
+    (.startRecording))
+  (try
+   (runner sequencer)
+   (finally (.stopRecording sequencer)))
+  sequence)
+
+(defn record-sequence
+  "Returns a sequence recorded from the given source. Recording length
+  depends on the runner function that receive the sequencer used as
+  argument. Optionally takes arguments to initialize an empty Sequence,
+  see empty-sequence."
+  [source runner & [division-type resolution num-tracks]]
+  (let [sequence (empty-sequence (or division-type :ppq)
+                                 (or resolution 20)
+                                 (or num-tracks 1))]
+    (with-connected-devices [source source
+                             sequencer (default-sequencer)]
+      (record-sequence* sequencer sequence runner))))
+
+(defn- play-sequence* [sequencer sequence runner]
+  (doto sequencer
+    (.setSequence sequence)
+    (.start))
+  (try
+   (runner sequencer)
+   (finally (.stop sequencer))))
+
+(defn play-sequence
+  "Plays the given sequence. If an optional runner function is given,
+  only play until it ends."
+  [sequence & [runner]]
+  (with-connected-devices [sequencer (default-sequencer)
+                           synthesizer (default-synthesizer)]
+    (play-sequence* sequencer sequence
+                    (or runner
+                        (fn [&_] (while (.isRunning sequencer)
+                                        (Thread/sleep 30)))))))
