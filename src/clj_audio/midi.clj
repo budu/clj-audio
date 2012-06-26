@@ -9,8 +9,7 @@
 (ns #^{:author "Nicolas Buduroi"
        :doc "Wrapper for Java Sound API's midi package."}
   clj-audio.midi
-  (:use clj-audio.utils
-        [clojure.contrib.def :only [defmacro- defvar-]])
+  (:use clj-audio.utils) 
   (:import java.io.File
            [javax.sound.midi
             MidiUnavailableException

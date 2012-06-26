@@ -10,8 +10,7 @@
        :doc "Clojure support for audio."}
   clj-audio.core
   (:use clj-audio.sampled
-        clj-audio.utils
-        [clojure.contrib.def :only [defvar]])
+        clj-audio.utils ) 
   (:import [javax.sound.sampled
             AudioInputStream
             AudioSystem

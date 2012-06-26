@@ -9,8 +9,7 @@
 (ns #^{:author "Nicolas Buduroi"
        :doc "Wrapper for Java Sound API's sampled package."}
   clj-audio.sampled
-  (:use clj-audio.utils
-        [clojure.contrib.def :only [defvar defvar-]])
+  (:use clj-audio.utils )
   (:import [javax.sound.sampled
             AudioFormat
             AudioSystem
