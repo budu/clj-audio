@@ -28,7 +28,7 @@
 
 ;;;; AudioFormat
 
-(defvar- encodings
+(def encodings
   (wrap-enum javax.sound.sampled.AudioFormat$Encoding))
 
 (defn make-format
@@ -84,10 +84,10 @@
 
 ;;;; Mixer
 
-(defvar *mixer*
-  nil
+(def ^:dynamic *mixer*
   "Mixer to be be used by functions creating lines, if nil let the
-  system decides which mixer to use.")
+  system decides which mixer to use."
+  nil)
 
 (defn mixer-info
   "Returns a map of common properties for the given Mixer object."
@@ -96,7 +96,7 @@
 
 ;;;; Line
 
-(defvar- line-types
+(def line-types
   {:clip   Clip
    :input  TargetDataLine
    :output SourceDataLine
@@ -134,7 +134,7 @@
         result#)
       (finally (.close ~binding)))))
 
-(defvar- line-events
+(def  line-events
   (wrap-enum javax.sound.sampled.LineEvent$Type
              :constants-as-keys))
 
@@ -234,9 +234,9 @@
 
 ;;;; AudioFileFormat
 
-(defvar file-types
-  (wrap-enum javax.sound.sampled.AudioFileFormat$Type)
-  "Map of audio file types, keyed by their corresponding keywords.")
+(def file-types
+  "Map of audio file types, keyed by their corresponding keywords."
+  (wrap-enum javax.sound.sampled.AudioFileFormat$Type))
 
 (defn ->file-format-info
   "Returns a map representing the given object's AudioFileFormat
