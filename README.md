@@ -10,6 +10,8 @@ The `midi` namespace is a work in progress.
 
 ## Usage
 
+    (use 'clj-audio.core)
+
 ### Playback
 
 Playing a wave file.
