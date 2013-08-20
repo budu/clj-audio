@@ -9,8 +9,7 @@
 (ns #^{:author "Nicolas Buduroi"
        :doc "Wrapper for Java Sound API's midi package."}
   clj-audio.midi
-  (:use clj-audio.utils
-        [clojure.contrib.def :only [defmacro- defvar-]])
+  (:use clj-audio.utils)
   (:import java.io.File
            [javax.sound.midi
             MidiUnavailableException
@@ -24,7 +23,7 @@
 
 ;;;; MidiSystem
 
-(defmacro- return-nil-if-unavailable [& body]
+(defmacro return-nil-if-unavailable [& body]
   `(try ~@body
     (catch ~'MidiUnavailableException _# nil)))
 
@@ -159,7 +158,7 @@
 
 ;;;; Sequence
 
-(defvar- division-types (wrap-enum Sequence))
+(def division-types ^:private (wrap-enum Sequence))
 
 (defn empty-sequence
   "Creates an empty Sequence where division-type can be one
