@@ -147,6 +147,11 @@
   (ref false)
 )
 
+(def play-cycle-complete?
+  "True if `play*` is not blocking due to I/O operations.
+  You can observe this variable for ensuring `play*` is not being used concurrently."
+  (ref true))
+
 (defn play*
   "Write the given audio stream bytes to the given source data line
   using a buffer of the given size. Returns the number of bytes played."
@@ -154,14 +159,18 @@
   (let [buffer (byte-array buffer-size)]
     (dosync (ref-set *playing* true))
     (loop [cnt 0 total 0]
+      (dosync (ref-set play-cycle-complete? false))
       (if (and (> cnt -1) @*playing*)
         (do
           (when (> cnt 0)
             (.write source buffer 0 cnt))
-          (recur (.read audio-stream buffer 0 (alength buffer))
+          (recur (let [v (.read audio-stream buffer 0 (alength buffer))]
+                   (dosync (ref-set play-cycle-complete? true))
+                   v)
                  (+ total cnt)))
         (dosync
           (ref-set *playing* false)
+          (ref-set play-cycle-complete? true)
           total)))))
 
 (defn stop
