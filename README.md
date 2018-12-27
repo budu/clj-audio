@@ -74,6 +74,14 @@ you'll have to get the [Tritonus plug-ins] shared classes
 MP3 support for example, you can grab the latest versions of [JLayer]
 and [MP3SPI].
 
+You can get those dependencies through [pdudits/soundlibs]. For example, add these to your project.clj:
+
+```
+[com.googlecode.soundlibs/tritonus-share "0.3.7.4"]
+[com.googlecode.soundlibs/jlayer "1.0.1.4"]
+[com.googlecode.soundlibs/mp3spi "1.9.5.4"]
+```
+
 ## License
 
 Copyright (c) Nicolas Buduroi. All rights reserved.
@@ -90,3 +98,4 @@ You must not remove this notice, or any other, from this software.
 [MP3SPI]: http://www.javazoom.net/mp3spi/sources.html
 [MP3 player]: http://gist.github.com/471910
 [Clojars]: http://clojars.org/clj-audio
+[pdudits/soundlibs]: https://github.com/pdudits/soundlibs
